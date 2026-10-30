@@ -71,7 +71,7 @@ For the analysis dispatch layer (the LLM that analyses individual findings), Cla
 No **Kali Linux**, clone o repositório e rode o instalador único:
 
 ```bash
-git clone https://github.com/seu-fork/raptor.git
+git clone https://github.com/ViniciusCostaGrillo/OpenRaptor.git
 cd raptor
 sudo ./install.sh
 ```

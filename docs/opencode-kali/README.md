@@ -25,7 +25,7 @@ Este projeto é um fork do **RAPTOR** (Recursive Autonomous Penetration Testing 
 
 ```bash
 # 1. Clonar o repositório
-git clone https://github.com/seu-fork/raptor.git
+git clone https://github.com/ViniciusCostaGrillo/OpenRaptor.git
 cd raptor
 
 # 2. Rodar o instalador automático
