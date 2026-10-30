@@ -5607,3 +5607,77 @@ def create_provider(config: ModelConfig) -> LLMProvider:
 ClaudeProvider = AnthropicProvider if ANTHROPIC_SDK_AVAILABLE else type('ClaudeProvider', (), {})
 OpenAIProvider = OpenAICompatibleProvider if OPENAI_SDK_AVAILABLE else type('OpenAIProvider', (), {})
 OllamaProvider = OpenAICompatibleProvider if OPENAI_SDK_AVAILABLE else type('OllamaProvider', (), {})
+
+
+class OpenCodeProvider(LLMProvider):
+    """OpenCode headless subprocess transport as a real :class:`LLMProvider`."""
+    is_stub = False
+
+    def __init__(self, config: ModelConfig, **kwargs) -> None:
+        super().__init__(config)
+        self._model = getattr(config, 'name', None)
+
+    def context_window(self) -> int:
+        return getattr(self.config, 'max_context', 128000)
+
+    def generate(
+        self,
+        prompt: str,
+        system_prompt: str | None = None,
+        max_tokens: int | None = None,
+        temperature: float | None = None,
+        **kwargs,
+    ) -> LLMResponse:
+        from .opencode_adapter import run_opencode_turn
+        import time as _time
+
+        start = _time.time()
+        text = run_opencode_turn(
+            prompt=prompt,
+            model=self._model,
+            system=system_prompt,
+            timeout=kwargs.get('timeout_s', 180),
+        )
+        duration = _time.time() - start
+
+        return LLMResponse(
+            content=text,
+            model=str(self._model or 'opencode'),
+            provider='opencode',
+            tokens_used=len(text.split()),
+            cost=0.0,
+            finish_reason='stop',
+            duration=duration,
+        )
+
+    def generate_structured(
+        self,
+        prompt: str,
+        schema: dict[str, Any],
+        system_prompt: str | None = None,
+        **kwargs,
+    ) -> StructuredResponse:
+        import json
+        structured_prompt = (
+            f"{prompt}\n\nRespond ONLY with valid JSON matching this schema:\n"
+            f"{json.dumps(schema)}"
+        )
+        resp = self.generate(structured_prompt, system_prompt=system_prompt, **kwargs)
+        raw = resp.content
+        try:
+            cleaned = raw.strip()
+            if cleaned.startswith('```'):
+                cleaned = cleaned.split('\n', 1)[1]
+                if cleaned.endswith('```'):
+                    cleaned = cleaned.rsplit('```', 1)[0]
+            data = json.loads(cleaned)
+        except Exception:
+            data = {'raw': raw}
+        return StructuredResponse(
+            result=data,
+            raw=raw,
+            cost=resp.cost,
+            tokens_used=resp.tokens_used,
+            model=resp.model,
+            provider=resp.provider,
+        )
