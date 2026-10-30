@@ -66,23 +66,27 @@ For the analysis dispatch layer (the LLM that analyses individual findings), Cla
 
 ## Quick Start
 
-### Option 1: Kali Linux Automated Setup (Recommended)
+### Instalação em 1 Comando (Pronto para Uso)
+
+No **Kali Linux**, clone o repositório e rode o instalador único:
 
 ```bash
-# Clone this fork
 git clone https://github.com/seu-fork/raptor.git
 cd raptor
+sudo ./install.sh
+```
 
-# Run automated Kali Linux setup
-chmod +x setup-kali.sh
-./setup-kali.sh
+O instalador configura tudo automaticamente:
+- Pacotes de sistema (`apt`), `uv`, `semgrep`, `aflplusplus`, `rizin/radare2`.
+- O agente autônomo **OpenCode**.
+- Registra o comando global `/usr/local/bin/raptor`.
+- Ativa automaticamente o ambiente hermético `.venv`.
 
-# Add bin to PATH
-export PATH="$PATH:$PWD/bin"
-
-# Launch RAPTOR via OpenCode
+**Para começar a usar:**
+```bash
 raptor
 ```
+Sem precisar configurar variáveis de ambiente, sem mexer no PATH e sem ativar ambientes virtuais manualmente!
 
 ### Option 2: Manual Installation
 

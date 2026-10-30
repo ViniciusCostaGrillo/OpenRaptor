@@ -21,20 +21,24 @@ Este projeto é um fork do **RAPTOR** (Recursive Autonomous Penetration Testing 
 
 ---
 
-## 🚀 Como Executar no Kali Linux (Planejado)
+## 🚀 Como Usar no Kali Linux (Instalação em 1 Comando)
 
 ```bash
-# 1. Clonar o fork
+# 1. Clonar o repositório
 git clone https://github.com/seu-fork/raptor.git
 cd raptor
 
-# 2. Executar setup automatizado para Kali Linux
-chmod +x setup-kali.sh
-./setup-kali.sh
+# 2. Rodar o instalador automático
+sudo ./install.sh
 
-# 3. Iniciar o RAPTOR interativo com OpenCode
+# 3. Começar a usar imediatamente em qualquer terminal!
 raptor
 ```
+
+Zero configurações adicionais necessárias:
+- Não precisa ativar venv manualmente.
+- Não precisa adicionar diretórios ao PATH (o comando `/usr/local/bin/raptor` é criado globalmente).
+- Permissões de ferramentas já aprovadas em `opencode.json`.
 
 
 ---

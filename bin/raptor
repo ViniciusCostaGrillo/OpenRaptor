@@ -132,6 +132,13 @@ if [ ! -d "$RAPTOR_DIR/core" ]; then
     exit 1
 fi
 
+# ── Auto-activate .venv if present (zero-configuration for user) ──
+if [ -d "$RAPTOR_DIR/.venv/bin" ]; then
+    PATH="$RAPTOR_DIR/.venv/bin:$PATH"
+    export PATH
+    export VIRTUAL_ENV="$RAPTOR_DIR/.venv"
+fi
+
 # ── Exec-boundary hardening ─────────────────────────────────────────
 # Runs BEFORE any binary is resolved via PATH; every exec below
 # inherits the result. RAPTOR_NO_LAUNCHER_HARDENING=1 skips the block.
