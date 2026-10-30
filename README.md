@@ -1,20 +1,20 @@
 ```text
-╔═══════════════════════════════════════════════════════════════════════════╗
-║                                                                           ║
-║             ██████╗  █████╗ ██████╗ ████████╗ ██████╗ ██████╗             ║
-║             ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗            ║
-║             ██████╔╝███████║██████╔╝   ██║   ██║   ██║██████╔╝            ║
-║             ██╔══██╗██╔══██║██╔═══╝    ██║   ██║   ██║██╔══██╗            ║
-║             ██║  ██║██║  ██║██║        ██║   ╚██████╔╝██║  ██║            ║
-║             ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝            ║
-║                                                                           ║
-║             Autonomous Offensive/Defensive Research Framework             ║
-║             OpenCode & Kali Linux Edition                                 ║
-║                                                                           ║
-║             Gadi Evron, Daniel Cuthbert, Thomas Dullien (Halvar Flake)    ║
-║             Michael Bargury, John Cartwright                              ║
-║                                                                           ║
-╚═══════════════════════════════════════════════════════════════════════════╝
+╔═════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                                 ║
+║       ██████╗ ██████╗ ███████╗███╗   ██╗██████╗  █████╗ ██████╗ ████████╗ ██████╗ ██████╗       ║
+║      ██╔═══██╗██╔══██╗██╔════╝████╗  ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗      ║
+║      ██║   ██║██████╔╝█████╗  ██╔██╗ ██║██████╔╝███████║██████╔╝   ██║   ██║   ██║██████╔╝      ║
+║      ██║   ██║██╔═══╝ ██╔══╝  ██║╚██╗██║██╔══██╗██╔══██║██╔═══╝    ██║   ██║   ██║██╔══██╗      ║
+║      ╚██████╔╝██║     ███████╗██║ ╚████║██║  ██║██║  ██║██║        ██║   ╚██████╔╝██║  ██║      ║
+║       ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝      ║
+║                                                                                                 ║
+║      Autonomous Offensive/Defensive Research Framework                                          ║
+║      OpenCode & Kali Linux Edition                                                              ║
+║                                                                                                 ║
+║                                                                                                 ║
+║      VCG                                                                                        ║
+║                                                                                                 ║
+╚═════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣤⣀⣀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⠿⠿⠟
@@ -23,7 +23,7 @@
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⣿⣿⣿⡟⠻⢿⡀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⢿⣿⠟⠀⠸⣊⡽⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇⣿⡁⠀⠀⠀⠉⠁⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⠿⣿⣧⠀ Get them bugs.....⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⠿⣿⣧⠀⠀⠀⠀⠀
 
 ```
 
@@ -34,13 +34,13 @@
 
 **Licence:** MIT, see LICENSE. Note that CodeQL has its own licence and does not permit commercial use.
 
-**Repository:** https://github.com/gadievron/raptor
+
 
 ---
 
-## What is RAPTOR?
+## What is OPENRAPTOR?
 
-RAPTOR is an autonomous security research framework built on top of OpenCode (opencode.ai) and optimized for Kali Linux. It chains together static analysis, binary analysis, LLM-powered vulnerability validation, exploit generation, and patch writing into a single workflow you can run against a codebase or binary.
+OPENRAPTOR is an autonomous security research framework built on top of OpenCode (opencode.ai) and optimized for Kali Linux. It chains together static analysis, binary analysis, LLM-powered vulnerability validation, exploit generation, and patch writing into a single workflow you can run against a codebase or binary.
 
 It is not polished software. It was built in free time, held together with enthusiasm and duct tape, and it works well enough that we can't stop using it. If you want to make it better, open a PR.
 
@@ -48,7 +48,7 @@ RAPTOR stands for Recursive Autonomous Penetration Testing and Observation Robot
 
 ### How it's built
 
-RAPTOR is mostly AI-generated code. The humans set direction, review
+OPENRAPTOR is mostly AI-generated code. The humans set direction, review
 output, and make design decisions; the AI writes the implementation.
 Mechanical verification (tests, static analysis, corpus calibration) keeps
 the quality bar where it needs to be regardless of who — or what — wrote
