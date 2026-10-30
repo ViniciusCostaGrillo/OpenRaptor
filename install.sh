@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 #
 # ╔═══════════════════════════════════════════════════════════════════════╗
-# ║  RAPTOR - Zero-Config One-Command Installer (OpenCode & Kali Linux)   ║
+# ║  OpenRaptor - Zero-Config One-Command Installer                       ║
+# ║  Kali Linux & OpenCode Native Edition                                 ║
 # ╚═══════════════════════════════════════════════════════════════════════╝
 #
 # Uso:
-#   ./install.sh
+#   1) Diretamente via curl (sem precisar clonar antes):
+#      curl -fsSL https://raw.githubusercontent.com/ViniciusCostaGrillo/OpenRaptor/main/install.sh | sudo bash
+#
+#   2) Ou após clonar o repositório:
+#      git clone https://github.com/ViniciusCostaGrillo/OpenRaptor.git
+#      cd OpenRaptor
+#      sudo ./install.sh
 #
 
 set -euo pipefail
@@ -18,27 +25,49 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${BOLD}${BLUE}╔═══════════════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BOLD}${BLUE}║             RAPTOR - Instalador Automático de 1 Comando               ║${NC}"
-echo -e "${BOLD}${BLUE}║             Pronto para Uso • Kali Linux & OpenCode                   ║${NC}"
+echo -e "${BOLD}${BLUE}║           OpenRaptor - Instalador Automático de 1 Comando             ║${NC}"
+echo -e "${BOLD}${BLUE}║           Pronto para Uso • Kali Linux & OpenCode                     ║${NC}"
 echo -e "${BOLD}${BLUE}╚═══════════════════════════════════════════════════════════════════════╝${NC}\n"
 
-# 1. Determinar o diretório da instalação
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
-
-# 2. Privilégios de Administrador
+# 1. Privilégios de Administrador
 SUDO=""
 if [ "$(id -u)" -ne 0 ]; then
     if command -v sudo >/dev/null 2>&1; then
         SUDO="sudo"
     else
-        echo -e "${RED}[!] Execute como root ou garanta acesso ao sudo.${NC}" >&2
+        echo -e "${RED}[!] Execute como root ou garanta acesso ao comando sudo.${NC}" >&2
         exit 1
     fi
 fi
 
+# 2. Determinar o diretório da instalação (suporte a execução local ou via curl|bash)
+REPO_URL="https://github.com/ViniciusCostaGrillo/OpenRaptor.git"
+INSTALL_DIR=""
+
+if [ -n "${BASH_SOURCE[0]:-}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
+    CANDIDATE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [ -f "$CANDIDATE_DIR/bin/raptor" ] && [ -f "$CANDIDATE_DIR/pyproject.toml" ]; then
+        INSTALL_DIR="$CANDIDATE_DIR"
+    fi
+fi
+
+if [ -z "$INSTALL_DIR" ]; then
+    # Executado via curl/stdin: instalar em /opt/openraptor
+    INSTALL_DIR="/opt/openraptor"
+    echo -e "${GREEN}[*] Instalando OpenRaptor em: ${BOLD}$INSTALL_DIR${NC}"
+    if [ -d "$INSTALL_DIR/.git" ]; then
+        echo -e "Repositório existente detectado. Atualizando..."
+        git -C "$INSTALL_DIR" pull --ff-only || true
+    else
+        $SUDO rm -rf "$INSTALL_DIR"
+        $SUDO git clone "$REPO_URL" "$INSTALL_DIR"
+    fi
+fi
+
+cd "$INSTALL_DIR"
+
 # 3. Pacotes do Sistema Operacional (Apt)
-echo -e "${GREEN}[1/6] Instalando dependências de sistema e ferramentas de segurança...${NC}"
+echo -e "\n${GREEN}[1/6] Instalando dependências de sistema e ferramentas de segurança...${NC}"
 if command -v apt-get >/dev/null 2>&1; then
     $SUDO apt-get update -y
     $SUDO apt-get install -y \
@@ -58,7 +87,7 @@ if ! command -v uv >/dev/null 2>&1; then
 fi
 
 # 5. Sincronizar o ambiente virtual hermético
-echo -e "\n${GREEN}[3/6] Sincronizando dependências do RAPTOR em .venv...${NC}"
+echo -e "\n${GREEN}[3/6] Sincronizando dependências do OpenRaptor em .venv...${NC}"
 uv sync --locked
 echo -e "✔ Ambiente Python pronto com todas as dependências isoladas."
 
@@ -82,12 +111,14 @@ fi
 
 # 8. Permissões e Link Global no Sistema (/usr/local/bin/raptor)
 echo -e "\n${GREEN}[6/6] Configurando permissões e registrando comando global 'raptor'...${NC}"
-chmod +x "$SCRIPT_DIR/bin/raptor"
-chmod +x "$SCRIPT_DIR/libexec/"* || true
+chmod +x "$INSTALL_DIR/install.sh" || true
+chmod +x "$INSTALL_DIR/setup-kali.sh" || true
+chmod +x "$INSTALL_DIR/bin/raptor"
+chmod +x "$INSTALL_DIR/libexec/"* || true
 
 # Criar link simbólico global para uso sem precisar mexer em PATH
 if [ -d "/usr/local/bin" ]; then
-    $SUDO ln -sf "$SCRIPT_DIR/bin/raptor" /usr/local/bin/raptor
+    $SUDO ln -sf "$INSTALL_DIR/bin/raptor" /usr/local/bin/raptor
     echo -e "✔ Link global criado em: ${BOLD}/usr/local/bin/raptor${NC}"
 fi
 
