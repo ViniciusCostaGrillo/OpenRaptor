@@ -35,3 +35,22 @@ chmod +x setup-kali.sh
 # 3. Iniciar o RAPTOR interativo com OpenCode
 raptor
 ```
+
+
+---
+
+## 🛡️ Bundle Integrado: "AAS Security Engineer"
+
+O fork vem equipado por padrão com todas as skills do bundle **AAS Security Engineer** (do repositório [agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills)):
+1. `ethical-hacking-methodology`: Metodologia de pentest autorizada e ciclo de vida completo.
+2. `burp-suite-testing`: Testes de aplicações web com fluxos integrados do Burp Suite.
+3. `top-web-vulnerabilities`: Cobertura de classes de vulnerabilidades alinhadas ao OWASP Top 10.
+4. `api-security-testing`: Auditoria e testes de segurança em APIs REST e GraphQL.
+5. `linux-privilege-escalation`: Identificação de vetores de escalação de privilégios em Linux/Kali.
+6. `cloud-penetration-testing`: Avaliação de ambientes de nuvem (AWS, Azure, GCP).
+7. `security-auditor`: Auditoria holística de segurança em código e infraestrutura.
+8. `vulnerability-scanner`: Triagem e validação prática de vulnerabilidades.
+9. `sast-configuration`: Ajuste e parametrização de scanners estáticos.
+10. `web-security-testing`: Testes defensivos e validação de segurança web.
+11. `threat-modeling-expert`: Mapeamento de ameaças e fronteiras de confiança.
+12. `skill-security-audit`: Auditoria de segurança de instruções e fluxos de dados de agentes.

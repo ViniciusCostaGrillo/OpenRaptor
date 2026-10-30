@@ -105,3 +105,22 @@ libexec/raptor-run-lifecycle complete "$OUTPUT_DIR"
 ```bash
 libexec/raptor-run-lifecycle fail "$OUTPUT_DIR" "error description"
 ```
+
+
+---
+
+## AAS SECURITY ENGINEER BUNDLE
+
+This fork bundles the full "AAS Security Engineer" suite from Agentic Awesome Skills:
+- `ethical-hacking-methodology`: Complete pentesting lifecycle (recon -> exploit -> report)
+- `burp-suite-testing`: Burp Suite workflows and web testing
+- `top-web-vulnerabilities`: OWASP-aligned vulnerability classes
+- `api-security-testing`: REST and GraphQL API security audits
+- `linux-privilege-escalation`: Linux privilege escalation paths on Kali Linux
+- `cloud-penetration-testing`: AWS, Azure, and GCP security assessment
+- `security-auditor`: Comprehensive codebase and infrastructure security auditing
+- `vulnerability-scanner`: Analysis and validation of scan findings
+- `sast-configuration`: Configuration and tuning of SAST scanners
+- `web-security-testing`: Defensive and offensive web application testing
+- `threat-modeling-expert`: Threat modeling, boundaries, and mitigations
+- `skill-security-audit`: Inspection of agent skill safety and instructions
