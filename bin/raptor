@@ -600,10 +600,11 @@ export RAPTOR_DIR
 # direct invocation through this launcher is the safe path.
 export _RAPTOR_TRUSTED=1
 
-# Parse RAPTOR-specific args, collect Claude args
+# Parse RAPTOR-specific args, collect OpenCode args
 STARTUP_ARGS=("--caller-dir" "$RAPTOR_CALLER_DIR")
-CLAUDE_ARGS=("-n" "RAPTOR")
-INITIAL_PROMPT="/raptor"
+OPENCODE_ARGS=()
+RUN_MODE=0
+INITIAL_PROMPT=""
 TARGET=""
 TRUST_REPO_ARG=""
 while [[ $# -gt 0 ]]; do
@@ -626,18 +627,19 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -c|--continue)
-            CLAUDE_ARGS+=("--continue")
-            INITIAL_PROMPT=""
+            OPENCODE_ARGS+=("--continue")
             shift
             ;;
         -m|--model)
             [[ $# -ge 2 ]] || { echo "raptor: $1 requires a value" >&2; exit 1; }
-            CLAUDE_ARGS+=("--model" "$2")
+            OPENCODE_ARGS+=("--model" "$2")
             shift 2
             ;;
-        -v|--verbose)
-            CLAUDE_ARGS+=("--verbose")
-            shift
+        --run|--batch)
+            [[ $# -ge 2 ]] || { echo "raptor: $1 requires a value" >&2; exit 1; }
+            RUN_MODE=1
+            INITIAL_PROMPT="$2"
+            shift 2
             ;;
         --trust-repo)
             TRUST_REPO_ARG="--trust"
@@ -650,7 +652,7 @@ while [[ $# -gt 0 ]]; do
             exec "$0" -h
             ;;
         -*)
-            CLAUDE_ARGS+=("$1")
+            OPENCODE_ARGS+=("$1")
             shift
             ;;
         *)
@@ -661,7 +663,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Build initial prompt: /raptor [target]. Strip control bytes from
+# Build initial prompt / target. Strip control bytes from
 # the operator-supplied TARGET first - an embedded newline would
 # split the prompt and read as a second downstream instruction;
 # legitimate paths don't contain them. Full C0 range plus DEL, the
@@ -671,8 +673,8 @@ _target_clean=$(printf '%s' "$TARGET" | tr -d '\000-\037\177')
 if [ "$_target_clean" != "$TARGET" ]; then
     echo "raptor: TARGET contained control bytes - stripped before use" >&2
 fi
-if [[ -n "$_target_clean" && -n "$INITIAL_PROMPT" ]]; then
-    INITIAL_PROMPT="/raptor $_target_clean"
+if [[ -n "$_target_clean" ]]; then
+    export RAPTOR_TARGET="$_target_clean"
 fi
 
 # Resolve which directory the trust check should scan. Built from the
@@ -947,10 +949,13 @@ if [[ -n "${ANTHROPIC_MODEL:-}" && -z "${CLAUDE_CODE_SUBAGENT_MODEL:-}" ]]; then
     export CLAUDE_CODE_SUBAGENT_MODEL="$ANTHROPIC_MODEL"
 fi
 
-if [[ -n "$INITIAL_PROMPT" ]]; then
+# Set terminal title cleanly via ANSI escape
+printf '\033]0;%s\007' "RAPTOR - OpenCode Edition" 2>/dev/null || true
+
+if [[ "$RUN_MODE" -eq 1 && -n "$INITIAL_PROMPT" ]]; then
     exec env -u BASH_ENV -u ENV -u SHELLOPTS -u BASHOPTS \
-        opencode run "${CLAUDE_ARGS[@]}" "$INITIAL_PROMPT"
+        opencode run "${OPENCODE_ARGS[@]}" "$INITIAL_PROMPT"
 else
     exec env -u BASH_ENV -u ENV -u SHELLOPTS -u BASHOPTS \
-        opencode "${CLAUDE_ARGS[@]}"
+        opencode "${OPENCODE_ARGS[@]}"
 fi
