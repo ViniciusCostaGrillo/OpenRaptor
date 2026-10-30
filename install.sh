@@ -92,20 +92,19 @@ echo -e "\n${GREEN}[2/6] Configurando uv e ambiente Python hermético...${NC}"
 export PATH="$INSTALL_DIR/.venv/bin:$HOME/.cargo/bin:$HOME/.local/bin:/root/.cargo/bin:/root/.local/bin:/usr/local/bin:$PATH"
 if ! command -v uv >/dev/null 2>&1; then
     echo -e "Instalando uv..."
-    curl -LsSf https://astral.sh/uv/install.sh | sh
+    curl -LsSf https://astral.sh/uv/install.sh | sh || true
     export PATH="$HOME/.cargo/bin:$HOME/.local/bin:/root/.cargo/bin:/root/.local/bin:$PATH"
 fi
 
-if command -v uv >/dev/null 2>&1; then
-    UV_BIN="$(command -v uv)"
-    if [ -d "/usr/local/bin" ] && [ ! -f "/usr/local/bin/uv" ]; then
-        $SUDO ln -sf "$UV_BIN" /usr/local/bin/uv || true
+for uv_candidate in "$HOME/.cargo/bin/uv" "$HOME/.local/bin/uv" "/root/.cargo/bin/uv" "/root/.local/bin/uv"; do
+    if [ -x "$uv_candidate" ] && [ ! -f "/usr/local/bin/uv" ]; then
+        $SUDO ln -sf "$uv_candidate" /usr/local/bin/uv 2>/dev/null || true
     fi
-fi
+done
 
 # 5. Sincronizar o ambiente virtual hermético
 echo -e "\n${GREEN}[3/6] Sincronizando dependências do OpenRaptor em .venv...${NC}"
-uv sync --locked
+uv sync --locked || uv sync || true
 echo -e "✔ Ambiente Python pronto com todas as dependências isoladas."
 
 # 6. Instalar OpenCode CLI
@@ -115,15 +114,16 @@ if ! command -v opencode >/dev/null 2>&1; then
     curl -fsSL https://opencode.ai/install | bash || true
     export PATH="$HOME/.local/bin:/root/.local/bin:$PATH"
 fi
+for oc_candidate in "$HOME/.local/bin/opencode" "$HOME/.opencode/bin/opencode" "/root/.local/bin/opencode" "/root/.opencode/bin/opencode"; do
+    if [ -x "$oc_candidate" ] && [ ! -f "/usr/local/bin/opencode" ]; then
+        $SUDO ln -sf "$oc_candidate" /usr/local/bin/opencode 2>/dev/null || true
+    fi
+done
 if ! command -v opencode >/dev/null 2>&1; then
     echo -e "Tentando instalar OpenCode via npm..."
     $SUDO npm install -g opencode-ai 2>/dev/null || true
 fi
 if command -v opencode >/dev/null 2>&1; then
-    OPENCODE_BIN="$(command -v opencode)"
-    if [ -d "/usr/local/bin" ] && [ ! -f "/usr/local/bin/opencode" ]; then
-        $SUDO ln -sf "$OPENCODE_BIN" /usr/local/bin/opencode || true
-    fi
     echo -e "✔ OpenCode pronto em: $(command -v opencode)"
 fi
 
@@ -131,13 +131,12 @@ fi
 echo -e "\n${GREEN}[5/6] Instalando Semgrep...${NC}"
 if ! command -v semgrep >/dev/null 2>&1; then
     uv tool install semgrep || pip3 install semgrep || true
-    if command -v semgrep >/dev/null 2>&1; then
-        SEMGREP_BIN="$(command -v semgrep)"
-        if [ -d "/usr/local/bin" ] && [ ! -f "/usr/local/bin/semgrep" ]; then
-            $SUDO ln -sf "$SEMGREP_BIN" /usr/local/bin/semgrep || true
-        fi
-    fi
 fi
+for semgrep_candidate in "$HOME/.local/bin/semgrep" "/root/.local/bin/semgrep"; do
+    if [ -x "$semgrep_candidate" ] && [ ! -f "/usr/local/bin/semgrep" ]; then
+        $SUDO ln -sf "$semgrep_candidate" /usr/local/bin/semgrep 2>/dev/null || true
+    fi
+done
 
 # 8. Permissões e Link Global no Sistema (/usr/local/bin/raptor)
 echo -e "\n${GREEN}[6/6] Configurando permissões e registrando comando global 'raptor'...${NC}"
