@@ -48,7 +48,10 @@ import ctypes.util
 import json
 import logging
 import os
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import select
 import subprocess
 import sys

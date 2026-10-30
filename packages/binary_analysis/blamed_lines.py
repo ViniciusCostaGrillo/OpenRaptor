@@ -53,7 +53,7 @@ _SECTION_FOOTER = ("_Generated mechanically from gcov data by "
                    "packages.binary_analysis.blamed_lines; evidence, "
                    "not a verdict._")
 
-_SKILL_CPP = Path(".claude/skills/crash-analysis/line-execution-checker/"
+_SKILL_CPP = Path("skills/crash-analysis/line-execution-checker/"
                   "line_checker.cpp")
 
 

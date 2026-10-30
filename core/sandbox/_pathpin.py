@@ -183,7 +183,7 @@ def is_per_process_procfs(path: str) -> bool:
 # at CALL time instead.
 _O_PATH = getattr(os, "O_PATH", 0)
 _HAVE_O_PATH = hasattr(os, "O_PATH")
-_O_COMPONENT = _O_PATH | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+_O_COMPONENT = _O_PATH | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, "O_CLOEXEC", 0)
 
 
 def open_pinned(canonical_path: str) -> int:

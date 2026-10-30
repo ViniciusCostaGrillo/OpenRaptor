@@ -1089,8 +1089,8 @@ has architectural context.
 
 Steps:
 
-1. Load .claude/skills/code-understanding/SKILL.md and
-   .claude/skills/code-understanding/map.md from {safe_raptor}.
+1. Load skills/code-understanding/SKILL.md and
+   skills/code-understanding/map.md from {safe_raptor}.
 
 2. Perform the --map analysis (MAP-0 through MAP-5) against the target.
 
@@ -1149,7 +1149,7 @@ Use it as-if it were a findings.json: feed straight into Stage 0 / A.
 
 Steps:
 
-1. Load .claude/skills/exploitability-validation/SKILL.md from {safe_raptor}
+1. Load skills/exploitability-validation/SKILL.md from {safe_raptor}
    and follow the full pipeline (Stage 0 mechanical inventory, then Stages
    A through F LLM analysis, then Stage 1 mechanical report) for the
    selected findings only.

@@ -65,7 +65,10 @@ process's exit.
 
 import json
 import os
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import socket
 import struct
 import sys

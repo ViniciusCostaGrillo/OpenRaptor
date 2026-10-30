@@ -2729,7 +2729,7 @@ class WebScanner:
             "recommendation": data.get("recommendation"),
             # Web stage profile (validation skill): stages that read
             # source files instead replay these HTTP facts — see
-            # .claude/skills/exploitability-validation/web-profile.md.
+            # skills/exploitability-validation/web-profile.md.
             "target_kind": "web",
             "method": data.get("method"),
             "parameter": (data.get("affected_parameters") or [None])[0],

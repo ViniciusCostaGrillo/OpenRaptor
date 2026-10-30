@@ -13,7 +13,10 @@ import errno
 import logging
 import re
 import os
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import shutil
 import signal
 import stat

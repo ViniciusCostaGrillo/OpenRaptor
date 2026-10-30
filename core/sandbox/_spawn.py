@@ -61,7 +61,10 @@ import errno
 import logging
 import os
 import platform
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 # Module-level, ALIASED: the setup child's step-7 go-pipe wait needs
 # select POST-FORK, where imports are banned (an import can allocate,
 # lock, and run arbitrary module code in the forked child) — and the

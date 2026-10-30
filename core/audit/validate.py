@@ -578,7 +578,7 @@ no field-mapping needed. Use it as-if it were a findings.json.
 
 Steps:
 
-1. Load .claude/skills/exploitability-validation/SKILL.md from {safe_raptor}
+1. Load skills/exploitability-validation/SKILL.md from {safe_raptor}
    and follow the full pipeline (Stage 0 mechanical inventory, then Stages
    A through F LLM analysis, then Stage 1 mechanical report) for the
    findings only.
