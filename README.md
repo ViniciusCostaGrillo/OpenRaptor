@@ -9,7 +9,7 @@
 ║             ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝            ║
 ║                                                                           ║
 ║             Autonomous Offensive/Defensive Research Framework             ║
-║             Based on Claude Code (v3.1.0)                                 ║
+║             OpenCode & Kali Linux Edition                                 ║
 ║                                                                           ║
 ║             Gadi Evron, Daniel Cuthbert, Thomas Dullien (Halvar Flake)    ║
 ║             Michael Bargury, John Cartwright                              ║
@@ -40,7 +40,7 @@
 
 ## What is RAPTOR?
 
-RAPTOR is an autonomous security research framework built on top of Claude Code (but not tied to it -- you can plug in your own analysis layer too). It chains together static analysis, binary analysis, LLM-powered vulnerability validation, exploit generation, and patch writing into a single workflow you can run against a codebase or binary.
+RAPTOR is an autonomous security research framework built on top of OpenCode (opencode.ai) and optimized for Kali Linux. It chains together static analysis, binary analysis, LLM-powered vulnerability validation, exploit generation, and patch writing into a single workflow you can run against a codebase or binary.
 
 It is not polished software. It was built in free time, held together with enthusiasm and duct tape, and it works well enough that we can't stop using it. If you want to make it better, open a PR.
 
@@ -58,37 +58,47 @@ the code.
 
 ## Prerequisites
 
-- **Claude Code** with an active subscription (Max, Pro, Team, or Enterprise) or an Anthropic API key. This is the orchestration layer for the interactive `raptor` shell -- optional if you only need the standalone CLIs, see [Running fully standalone](#running-fully-standalone-no-claude-code) below.
+- **OpenCode** (`curl -fsSL https://opencode.ai/install | bash` or `npm install -g opencode-ai`).
 - **[uv](https://docs.astral.sh/uv/)** for Python dependency management, **Python 3.12+**, and **Node.js 18+**.
-- **Semgrep** (`uv tool install semgrep`) for static analysis. CodeQL is optional but recommended.
+- **Semgrep** (`uv tool install semgrep`), **AFL++**, and **Rizin/Radare2** for security testing (all pre-installed on Kali Linux or installed automatically via `setup-kali.sh`).
 
 For the analysis dispatch layer (the LLM that analyses individual findings), Claude Code itself handles everything by default -- no extra API keys needed. If you want multi-model analysis (e.g. Claude + GPT + Gemini) or a fully local setup, you will need to configure the other provider(s). See [Using a different LLM](#using-a-different-llm) below.
 
 ## Quick Start
 
-### Option 1: Install manually
+### Option 1: Kali Linux Automated Setup (Recommended)
 
 ```bash
-# Clone the repo
-git clone https://github.com/gadievron/raptor.git
+# Clone this fork
+git clone https://github.com/seu-fork/raptor.git
 cd raptor
 
+# Run automated Kali Linux setup
+chmod +x setup-kali.sh
+./setup-kali.sh
+
+# Add bin to PATH
+export PATH="$PATH:$PWD/bin"
+
+# Launch RAPTOR via OpenCode
+raptor
+```
+
+### Option 2: Manual Installation
+
+```bash
 # Install Python dependencies
 uv sync --locked
 source .venv/bin/activate
 
-# Install Claude Code (if you don't already have it)
-npm install -g @anthropic-ai/claude-code
+# Install OpenCode
+curl -fsSL https://opencode.ai/install | bash
 
-# Install Semgrep (required for scanning)
+# Install Semgrep
 uv tool install semgrep
 
-# Add the launcher to your PATH -- put this in your shell profile to make it
-# permanent. Append rather than prepend, so system directories stay ahead of
-# the repo. (Alternatively, symlink bin/raptor into a directory already on PATH.)
+# Add launcher to PATH and launch
 export PATH="$PATH:$PWD/bin"
-
-# Launch RAPTOR
 raptor
 ```
 
