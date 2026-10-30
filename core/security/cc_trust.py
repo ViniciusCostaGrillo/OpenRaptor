@@ -723,6 +723,8 @@ def _config_candidates(target: Path) -> list[tuple[str, Path]]:
     return [
         ("settings", target / ".claude" / "settings.json"),
         ("settings", target / ".claude" / "settings.local.json"),
+        ("settings", target / "opencode.json"),
+        ("settings", target / ".opencode" / "opencode.json"),
         ("mcp",      target / ".mcp.json"),
     ]
 

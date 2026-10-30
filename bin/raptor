@@ -243,7 +243,7 @@ if [ -z "${RAPTOR_NO_LAUNCHER_HARDENING:-}" ]; then
 
     # Warn (don't drop) when claude resolves under a world-writable
     # ANCESTOR — the per-entry check above can't see parents.
-    _claude_path="$(command -v claude 2>/dev/null || true)"
+    _claude_path="$(command -v opencode 2>/dev/null || command -v claude 2>/dev/null || true)"
     if [ -n "$_claude_path" ]; then
         _dir="$(_rp dirname "$_claude_path")"
         _hops=0
@@ -574,13 +574,17 @@ if [[ -n "${RAPTOR_NO_CLAUDE:-}" ]]; then
     exit 1
 fi
 
-# Claude required for the interactive session.
-if ! command -v claude >/dev/null 2>&1; then
+# OpenCode required for the interactive session.
+if ! command -v opencode >/dev/null 2>&1; then
     _raptor_local_route "$@" || true
-    echo "raptor: claude not found. Install Claude Code:" >&2
-    echo "  https://docs.anthropic.com/en/docs/claude-code/overview" >&2
+    echo "raptor: opencode not found. Install OpenCode:" >&2
+    echo "  curl -fsSL https://opencode.ai/install | bash" >&2
     exit 1
 fi
+
+# Ensure cleanup hook runs on exit/interrupt
+trap '"$RAPTOR_DIR/libexec/raptor-lifecycle-hook" session-end 2>/dev/null || true' EXIT INT TERM
+"$RAPTOR_DIR/libexec/raptor-session-init" 2>/dev/null || true
 
 # RAPTOR_CALLER_DIR was exported before the direct routes above.
 export RAPTOR_DIR
@@ -938,8 +942,8 @@ fi
 
 if [[ -n "$INITIAL_PROMPT" ]]; then
     exec env -u BASH_ENV -u ENV -u SHELLOPTS -u BASHOPTS \
-        claude "${PLUGIN_ARGS[@]}" "${CLAUDE_ARGS[@]}" "$INITIAL_PROMPT"
+        opencode run "${CLAUDE_ARGS[@]}" "$INITIAL_PROMPT"
 else
     exec env -u BASH_ENV -u ENV -u SHELLOPTS -u BASHOPTS \
-        claude "${PLUGIN_ARGS[@]}" "${CLAUDE_ARGS[@]}"
+        opencode "${CLAUDE_ARGS[@]}"
 fi
