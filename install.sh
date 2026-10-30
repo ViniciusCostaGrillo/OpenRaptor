@@ -40,6 +40,9 @@ if [ "$(id -u)" -ne 0 ]; then
     fi
 fi
 
+# Detectar usuário real chamador (para permissões se rodar via sudo)
+REAL_USER="${SUDO_USER:-$(id -un)}"
+
 # 2. Determinar o diretório da instalação (suporte a execução local ou via curl|bash)
 REPO_URL="https://github.com/ViniciusCostaGrillo/OpenRaptor.git"
 INSTALL_DIR=""
@@ -70,20 +73,34 @@ cd "$INSTALL_DIR"
 echo -e "\n${GREEN}[1/6] Instalando dependências de sistema e ferramentas de segurança...${NC}"
 if command -v apt-get >/dev/null 2>&1; then
     $SUDO apt-get update -y
+    # Pacotes essenciais
     $SUDO apt-get install -y \
         python3 python3-pip python3-venv build-essential \
-        curl git jq rizin radare2 aflplusplus gdb libseccomp-dev \
-        nodejs npm
+        curl git jq gdb libseccomp-dev nodejs npm
+
+    # Ferramentas de segurança com nomes específicos do Kali/Debian (afl++ no Kali)
+    echo -e "Instalando ferramentas de análise de segurança..."
+    $SUDO apt-get install -y afl++ 2>/dev/null || $SUDO apt-get install -y afl 2>/dev/null || true
+    $SUDO apt-get install -y rizin 2>/dev/null || true
+    $SUDO apt-get install -y radare2 2>/dev/null || true
 else
     echo -e "${YELLOW}[!] Gerenciador apt-get não encontrado. Certifique-se de que python3, git e curl estão instalados.${NC}"
 fi
 
 # 4. Instalador do uv (Python Package Manager ultra rápido)
 echo -e "\n${GREEN}[2/6] Configurando uv e ambiente Python hermético...${NC}"
+export PATH="$INSTALL_DIR/.venv/bin:$HOME/.cargo/bin:$HOME/.local/bin:/root/.cargo/bin:/root/.local/bin:/usr/local/bin:$PATH"
 if ! command -v uv >/dev/null 2>&1; then
     echo -e "Instalando uv..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
-    export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
+    export PATH="$HOME/.cargo/bin:$HOME/.local/bin:/root/.cargo/bin:/root/.local/bin:$PATH"
+fi
+
+if command -v uv >/dev/null 2>&1; then
+    UV_BIN="$(command -v uv)"
+    if [ -d "/usr/local/bin" ] && [ ! -f "/usr/local/bin/uv" ]; then
+        $SUDO ln -sf "$UV_BIN" /usr/local/bin/uv || true
+    fi
 fi
 
 # 5. Sincronizar o ambiente virtual hermético
@@ -95,18 +112,31 @@ echo -e "✔ Ambiente Python pronto com todas as dependências isoladas."
 echo -e "\n${GREEN}[4/6] Verificando / Instalando OpenCode CLI...${NC}"
 if ! command -v opencode >/dev/null 2>&1; then
     echo -e "Instalando OpenCode via script oficial..."
-    curl -fsSL https://opencode.ai/install | bash
-    export PATH="$HOME/.local/bin:$PATH"
+    curl -fsSL https://opencode.ai/install | bash || true
+    export PATH="$HOME/.local/bin:/root/.local/bin:$PATH"
+fi
+if ! command -v opencode >/dev/null 2>&1; then
+    echo -e "Tentando instalar OpenCode via npm..."
+    $SUDO npm install -g opencode-ai 2>/dev/null || true
 fi
 if command -v opencode >/dev/null 2>&1; then
+    OPENCODE_BIN="$(command -v opencode)"
+    if [ -d "/usr/local/bin" ] && [ ! -f "/usr/local/bin/opencode" ]; then
+        $SUDO ln -sf "$OPENCODE_BIN" /usr/local/bin/opencode || true
+    fi
     echo -e "✔ OpenCode pronto em: $(command -v opencode)"
 fi
 
 # 7. Instalar Semgrep
 echo -e "\n${GREEN}[5/6] Instalando Semgrep...${NC}"
 if ! command -v semgrep >/dev/null 2>&1; then
-    uv tool install semgrep || true
-    export PATH="$HOME/.local/bin:$PATH"
+    uv tool install semgrep || pip3 install semgrep || true
+    if command -v semgrep >/dev/null 2>&1; then
+        SEMGREP_BIN="$(command -v semgrep)"
+        if [ -d "/usr/local/bin" ] && [ ! -f "/usr/local/bin/semgrep" ]; then
+            $SUDO ln -sf "$SEMGREP_BIN" /usr/local/bin/semgrep || true
+        fi
+    fi
 fi
 
 # 8. Permissões e Link Global no Sistema (/usr/local/bin/raptor)
@@ -115,6 +145,12 @@ chmod +x "$INSTALL_DIR/install.sh" || true
 chmod +x "$INSTALL_DIR/setup-kali.sh" || true
 chmod +x "$INSTALL_DIR/bin/raptor"
 chmod +x "$INSTALL_DIR/libexec/"* || true
+
+# Atribuir propriedade da pasta instalada ao usuário real (para que não fique bloqueada como root)
+if [ -n "$REAL_USER" ] && [ "$REAL_USER" != "root" ]; then
+    REAL_GROUP="$(id -gn "$REAL_USER" 2>/dev/null || echo "$REAL_USER")"
+    $SUDO chown -R "$REAL_USER:$REAL_GROUP" "$INSTALL_DIR" 2>/dev/null || true
+fi
 
 # Criar link simbólico global para uso sem precisar mexer em PATH
 if [ -d "/usr/local/bin" ]; then
