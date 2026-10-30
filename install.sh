@@ -65,6 +65,12 @@ if [ -z "$INSTALL_DIR" ]; then
         $SUDO rm -rf "$INSTALL_DIR"
         $SUDO git clone "$REPO_URL" "$INSTALL_DIR"
     fi
+
+    # Executa o script recém-atualizado do disco para contornar qualquer cache de CDN do curl
+    if [ -z "${RAPTOR_REEXEC:-}" ] && [ -f "$INSTALL_DIR/install.sh" ]; then
+        export RAPTOR_REEXEC=1
+        exec bash "$INSTALL_DIR/install.sh" "$@"
+    fi
 fi
 
 cd "$INSTALL_DIR"
