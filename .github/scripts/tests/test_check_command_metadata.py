@@ -54,6 +54,11 @@ def test_leading_slash_stripped(mod) -> None:
 def test_repo_sentence_matches_frontmatter_set(mod) -> None:
     """The shipped commands.md sentence must parse to exactly the
     frontmatter-excluded set (the lint's end-to-end contract)."""
+    if (
+        mod.COMMANDS_DIR.name == "commands"
+        and mod.COMMANDS_DIR.parent.name == ".opencode"
+    ):
+        pytest.skip("OpenCode command metadata has no legacy exclusion list")
     text = mod.COMMANDS_INDEX.read_text(encoding="utf-8")
     m = mod._EXCL_SENTENCE_RE.search(text)
     assert m, "exclusion sentence missing from commands.md"

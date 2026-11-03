@@ -673,9 +673,6 @@ _target_clean=$(printf '%s' "$TARGET" | tr -d '\000-\037\177')
 if [ "$_target_clean" != "$TARGET" ]; then
     echo "raptor: TARGET contained control bytes - stripped before use" >&2
 fi
-if [[ -n "$_target_clean" ]]; then
-    export RAPTOR_TARGET="$_target_clean"
-fi
 
 # Resolve which directory the trust check should scan. Built from the
 # same control-stripped spelling the prompt carries: the gate and the

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Lint slash-command metadata: every ``.claude/commands/*.md`` must
-carry a parseable ``dispatch:`` frontmatter field, and any
-``exclude_from_listing: true`` flag must match the hardcoded exclusion
-list in ``commands.md``.
+"""Lint slash-command metadata.
+
+Legacy Claude commands must carry a parseable ``dispatch:`` frontmatter
+field, and any ``exclude_from_listing: true`` flag must match the
+hardcoded exclusion list in ``commands.md``. OpenCode commands use
+``description:`` and ``agent:`` frontmatter instead.
 
 Failing modes:
 
@@ -33,7 +35,12 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-COMMANDS_DIR = REPO / ".claude" / "commands"
+LEGACY_COMMANDS_DIR = REPO / ".claude" / "commands"
+COMMANDS_DIR = (
+    LEGACY_COMMANDS_DIR
+    if LEGACY_COMMANDS_DIR.is_dir()
+    else REPO / ".opencode" / "commands"
+)
 COMMANDS_INDEX = COMMANDS_DIR / "commands.md"
 
 # Dispatch tokens we accept. ``skill`` means "no single libexec — see
@@ -127,6 +134,23 @@ def main() -> int:
         return 2
 
     errs: list[str] = []
+    if COMMANDS_DIR != LEGACY_COMMANDS_DIR:
+        for md in md_files:
+            fm = _parse_frontmatter(md.read_text(encoding="utf-8"))
+            if not fm.get("description"):
+                errs.append(
+                    f"/{md.stem}: missing ``description:`` frontmatter field"
+                )
+            if not fm.get("agent"):
+                errs.append(f"/{md.stem}: missing ``agent:`` frontmatter field")
+        if errs:
+            print("Command-metadata lint failed:", file=sys.stderr)
+            for e in errs:
+                print(f"  - {e}", file=sys.stderr)
+            return 1
+        print(f"OK: {len(md_files)} OpenCode command .md files lint-clean.")
+        return 0
+
     excluded_via_frontmatter: set[str] = set()
     for md in md_files:
         name = md.stem

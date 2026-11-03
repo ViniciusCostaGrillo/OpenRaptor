@@ -1,6 +1,9 @@
 {
   "_comment": "Accepted miswiring-detector findings. Keys are class:kind:file:symbol (no line numbers). Add an entry ONLY with a note explaining why the finding is accepted; prefer fixing. check_miswiring.py fails CI on any finding not listed here and warns on stale entries.",
   "entries": {
+    "dead:dead_method:packages/exploit_feasibility/analyzer.py:FeasibilityReport.load_context": {
+      "note": "backward-compatible public helper retained for external callers; its zero in-repo references are expected"
+    },
     "artifacts:orphan_reader::*-metadata.json": {
       "note": "artifact triaged at baseline cut: operator/LLM-facing output, externally produced input, or wiring pending"
     },
