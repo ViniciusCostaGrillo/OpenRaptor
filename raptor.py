@@ -1697,6 +1697,31 @@ def mode_openant(args: list) -> int:
                               "Running OpenAnt LLM-powered source-code scan...")
 
 
+def _mode_hunt_dispatch(submode: str, args: list) -> int:
+    from packages.hunt.cli import main as hunt_main
+    return hunt_main([submode, *args])
+
+
+def mode_hunt(args: list) -> int:
+    """Master /hunt Bug Bounty & Ethical Hacking orchestrator."""
+    return _mode_hunt_dispatch("hunt", args)
+
+
+def mode_recon(args: list) -> int:
+    """External recon (subfinder, nmap, httpx, katana)."""
+    return _mode_hunt_dispatch("recon", args)
+
+
+def mode_mobile(args: list) -> int:
+    """Android APK analysis and Ghidra .so handoff."""
+    return _mode_hunt_dispatch("mobile", args)
+
+
+def mode_report(args: list) -> int:
+    """Bug Bounty & Pentest report generation."""
+    return _mode_hunt_dispatch("report", args)
+
+
 def show_mode_help(mode: str, preamble: bool = True) -> None:
     """Show detailed help for a specific mode.
 
@@ -1708,7 +1733,7 @@ def show_mode_help(mode: str, preamble: bool = True) -> None:
     mode_scripts = _mode_help_scripts()
 
     if mode not in mode_scripts:
-        all_modes = set(mode_scripts.keys()) | {'describe', 'doctor', 'sca', 'frida'}
+        all_modes = set(mode_scripts.keys()) | {'describe', 'doctor', 'sca', 'frida', 'hunt', 'recon', 'mobile', 'report'}
         if mode not in all_modes:
             print(f"✗ Unknown mode: {mode}", file=sys.stderr)
             print(f"Available modes: {', '.join(sorted(all_modes))}", file=sys.stderr)
@@ -1719,7 +1744,11 @@ def show_mode_help(mode: str, preamble: bool = True) -> None:
             'doctor': mode_doctor,
             'sca': mode_sca,
             'frida': mode_frida,
-        'openant': mode_openant,
+            'openant': mode_openant,
+            'hunt': mode_hunt,
+            'recon': mode_recon,
+            'mobile': mode_mobile,
+            'report': mode_report,
         }
         mode_handlers[mode](["--help"])
         return
@@ -1776,6 +1805,10 @@ Available Modes:
   doctor      - Status report for local setup (no claude needed)
   frida       - Dynamic instrumentation via Frida (alpha)
   openant     - OpenAnt AST+LLM source-code vulnerability scan
+  hunt        - Interactive Bug Bounty & Ethical Hacking master orchestrator
+  recon       - External recon (subfinder, nmap, httpx, katana)
+  mobile      - Android APK analyzer + Ghidra .so handoff
+  report      - Generate Bug Bounty & Pentest Markdown/HTML reports
 
 Examples:
   # Full autonomous workflow
@@ -1939,6 +1972,10 @@ def main():
         'describe': mode_describe,
         'frida': mode_frida,
         'openant': mode_openant,
+        'hunt': mode_hunt,
+        'recon': mode_recon,
+        'mobile': mode_mobile,
+        'report': mode_report,
     }
     
     if mode not in mode_handlers:

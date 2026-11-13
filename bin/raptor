@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# raptor - launch RAPTOR via Claude Code
+# raptor - launch RAPTOR via OpenCode (with Claude Code fallback)
 #
 # Install: add this directory to PATH, or symlink to a directory already on PATH.
 #
@@ -442,7 +442,7 @@ Projects:
   raptor project none                  Clear the active project
   raptor project help                  Full subcommand list
 
-Any additional flags are passed through to Claude Code.
+Any additional flags are passed through to OpenCode (or Claude Code fallback).
 USAGE
     exit 0
 fi

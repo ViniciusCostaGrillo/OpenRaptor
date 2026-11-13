@@ -8,7 +8,7 @@ agent: build
 Output "RAPTOR commands:" then list all available RAPTOR slash commands grouped by workflow stage. Use the groups below as `**bold headers**`, each followed by a bullet list of commands in alphabetical order. Format: `- /command <args> — Description`. Derive the command list from the available skills — do not use a hardcoded list.
 
 **Discover**
-Find vulnerabilities: agentic, codeql, fuzz, scan, sca, web.
+Find vulnerabilities: agentic, codeql, fuzz, hunt, mobile, recon, scan, sca, web.
 
 **Analyse**
 Go deeper: analyze, audit, binary, crash-analysis, describe, frida, ghidra, oss-forensics, threat-model, understand, validate.
@@ -17,7 +17,7 @@ Go deeper: analyze, audit, binary, crash-analysis, describe, frida, ghidra, oss-
 Act on findings: cve-diff, cve-env, exploit, patch.
 
 **Report**
-Present results: annotate, diagram, review, scorecard.
+Present results: annotate, diagram, report, review, scorecard.
 
 **Project**
 Manage work: ask, project, sage, version.

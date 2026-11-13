@@ -89,6 +89,12 @@ if command -v apt-get >/dev/null 2>&1; then
     $SUDO apt-get install -y afl++ 2>/dev/null || $SUDO apt-get install -y afl 2>/dev/null || true
     $SUDO apt-get install -y rizin 2>/dev/null || true
     $SUDO apt-get install -y radare2 2>/dev/null || true
+
+    # Ferramentas de Bug Bounty, Recon, Web e Mobile (Kali Linux)
+    echo -e "Instalando ferramentas de Bug Bounty / Recon / Mobile..."
+    for kali_pkg in nmap ffuf sqlmap nuclei subfinder httpx-toolkit katana dalfox apktool jadx; do
+        $SUDO apt-get install -y "$kali_pkg" 2>/dev/null || true
+    done
 else
     echo -e "${YELLOW}[!] Gerenciador apt-get não encontrado. Certifique-se de que python3, git e curl estão instalados.${NC}"
 fi

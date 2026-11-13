@@ -1,6 +1,6 @@
 [project]
 name = "raptor"
-version = "3.1.0"
+version = "3.2.0"
 description = "Autonomous offensive/defensive security research framework"
 readme = "README.md"
 # 3.12 floor, probed empirically: the sandbox hard-requires os.unshare
